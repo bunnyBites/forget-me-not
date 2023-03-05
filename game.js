@@ -6,6 +6,14 @@ const userClickedPattern = [];
 
 const buttonColors = ["red", "green", "blue", "yellow"];
 
+// function to play sound for the provided color
+const playSoundForColor = (selectedColor) => {
+  const audioForChosenColor = new Audio("sounds/" + selectedColor + ".mp3");
+  audioForChosenColor.autoplay = true;
+
+  audioForChosenColor.play();
+}
+
 // get random number between 0 to 3
 const nextSequence = () => {
   const randomNumber = Math.floor(Math.random() * 3);
@@ -20,10 +28,7 @@ const nextSequence = () => {
   $(`#${randomChosenColor}`).fadeIn(300).fadeOut(300).fadeIn(300);
 
   // play the sound for the chosen color
-  const audioForChosenColor = new Audio("sounds/" + randomChosenColor + ".mp3");
-  audioForChosenColor.autoplay = true;
-
-  audioForChosenColor.play();
+  playSoundForColor(randomChosenColor);
 };
 
 nextSequence();
@@ -36,4 +41,7 @@ $(".btn").on("click", (event) => {
 
   // add the user chosen color to userClickPattern array
   userClickedPattern.push(userChosenColour);
+
+  // play sound for the selected color
+  playSoundForColor(userChosenColour);
 })
