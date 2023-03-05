@@ -6,6 +6,9 @@ const userClickedPattern = [];
 
 const buttonColors = ["red", "green", "blue", "yellow"];
 
+// state to track user level
+let level = 0;
+
 // function to play sound for the provided color
 const playSoundForColor = (selectedColor) => {
   const audioForChosenColor = new Audio("sounds/" + selectedColor + ".mp3");
@@ -40,9 +43,10 @@ const nextSequence = () => {
 
   // play the sound for the chosen color
   playSoundForColor(randomChosenColor);
-};
 
-nextSequence();
+  level = level + 1;
+  $("#level-title").text(`Level ${level}`);
+};
 
 // handle user click event
 $(".btn").on("click", (event) => {
@@ -58,4 +62,19 @@ $(".btn").on("click", (event) => {
 
     // animate the selected color by user
     animateForColor(userChosenColour)
-})
+});
+
+const onLoad = () => {
+  // check if the game has started by checking gamePattern array
+  if (!gamePattern.length) {
+    // add keydown event listner at level 0
+    $(document).on("keydown", (event) => {
+      if (event.key === "a" || event.key === "A") {
+        nextSequence();
+        $(document).off();
+      }
+    })
+  }
+}
+
+onLoad();
