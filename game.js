@@ -9,6 +9,10 @@ const buttonColors = ["red", "green", "blue", "yellow"];
 // state to track user level
 let level = 0;
 
+$(document).keydown(() => {
+  if (!gamePattern.length) { nextSequence();  }
+});
+
 // function to play sound for the provided color
 const playSoundForColor = (selectedColor) => {
   const audioForChosenColor = new Audio("sounds/" + selectedColor + ".mp3");
@@ -32,6 +36,9 @@ const animateForColor = (selectedColor) => {
 
 // get random number between 0 to 3
 const nextSequence = () => {
+  // clearing user input
+  userClickedPattern.splice(0);
+
   const randomNumber = Math.floor(Math.random() * 3);
 
   // choose a random color based on the number generated
@@ -49,9 +56,6 @@ const nextSequence = () => {
   // display the user level
   level = level + 1;
   $("#level-title").text(`Level ${level}`);
-
-  // clearing user input
-  userClickedPattern.splice(0);
 };
 
 const isValidateUserSequence = () => {
@@ -63,6 +67,12 @@ const isValidateUserSequence = () => {
   return isValid;
 }
 
+// function to reset game
+const resetGame = () => {
+  level = 0;
+  gamePattern.splice(0);
+}
+
 // handler function when user memory fails
 const handleUserFailure = () => {
   playSoundForColor("wrong");
@@ -70,6 +80,11 @@ const handleUserFailure = () => {
   $("body").addClass("game-over");
 
   setTimeout(() => { $("body").removeClass("game-over"); }, 200);
+
+  // show game over message
+  $("#level-title").text("Game Over, Press Any Key to Restart");
+
+  resetGame();
 }
 
 // handle user click event
@@ -80,32 +95,16 @@ $(".btn").on("click", (event) => {
   // add the user chosen color to userClickPattern array
   userClickedPattern.push(userChosenColour);
 
+  // play sound for the selected color
+  playSoundForColor(userChosenColour);
+
+  // animate the selected color by user
+  animateForColor(userChosenColour);
+
   // check is the user provides valid sequence
   const isUserSequenceValid = isValidateUserSequence();
 
   if (isUserSequenceValid) {
-    // play sound for the selected color
-    playSoundForColor(userChosenColour);
-
-    // animate the selected color by user
-    animateForColor(userChosenColour);
-
-    if (userClickedPattern.length === gamePattern.length) setTimeout(nextSequence, 500);
-
+    if (userClickedPattern.length === gamePattern.length) setTimeout(nextSequence, 1000);
   } else { handleUserFailure(); }
 });
-
-const onLoad = () => {
-  // check if the game has started by checking gamePattern array
-  if (!gamePattern.length) {
-    // add keydown event listner at level 0
-    $(document).on("keydown", (event) => {
-      if (event.key === "a" || event.key === "A") {
-        nextSequence();
-        $(document).off();
-      }
-    });
-  }
-};
-
-onLoad();
