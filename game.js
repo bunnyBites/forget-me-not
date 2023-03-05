@@ -15,18 +15,20 @@ const playSoundForColor = (selectedColor) => {
   audioForChosenColor.autoplay = true;
 
   audioForChosenColor.play();
-}
+};
 
 // function to animate for the selected color
 const animateForColor = (selectedColor) => {
   $(`#${selectedColor}`)
-  .fadeIn(100)
-  .fadeOut(100)
-  .fadeIn(100)
-  .addClass("pressed");
+    .fadeIn(100)
+    .fadeOut(100)
+    .fadeIn(100)
+    .addClass("pressed");
 
-  setTimeout(() => { $(`#${selectedColor}`).removeClass("pressed") }, 100);
-}
+  setTimeout(() => {
+    $(`#${selectedColor}`).removeClass("pressed");
+  }, 100);
+};
 
 // get random number between 0 to 3
 const nextSequence = () => {
@@ -39,29 +41,58 @@ const nextSequence = () => {
   gamePattern.push(randomChosenColor);
 
   // animate the selected random color
-  animateForColor(randomChosenColor)
+  animateForColor(randomChosenColor);
 
   // play the sound for the chosen color
   playSoundForColor(randomChosenColor);
 
+  // display the user level
   level = level + 1;
   $("#level-title").text(`Level ${level}`);
+
+  // clearing user input
+  userClickedPattern.splice(0);
 };
+
+const isValidateUserSequence = () => {
+  let isValid = false;
+  userClickedPattern.forEach((userColorSequence, index) => {
+    isValid = (userColorSequence === gamePattern[index]);
+  });
+
+  return isValid;
+}
+
+// handler function when user memory fails
+const handleUserFailure = () => {
+  playSoundForColor("wrong");
+
+  $("body").addClass("game-over");
+
+  setTimeout(() => { $("body").removeClass("game-over"); }, 200);
+}
 
 // handle user click event
 $(".btn").on("click", (event) => {
-
   // get the id of the selected button
   const userChosenColour = event.target.id;
 
   // add the user chosen color to userClickPattern array
   userClickedPattern.push(userChosenColour);
 
-  // play sound for the selected color
-  playSoundForColor(userChosenColour);
+  // check is the user provides valid sequence
+  const isUserSequenceValid = isValidateUserSequence();
+
+  if (isUserSequenceValid) {
+    // play sound for the selected color
+    playSoundForColor(userChosenColour);
 
     // animate the selected color by user
-    animateForColor(userChosenColour)
+    animateForColor(userChosenColour);
+
+    if (userClickedPattern.length === gamePattern.length) setTimeout(nextSequence, 500);
+
+  } else { handleUserFailure(); }
 });
 
 const onLoad = () => {
@@ -73,8 +104,8 @@ const onLoad = () => {
         nextSequence();
         $(document).off();
       }
-    })
+    });
   }
-}
+};
 
 onLoad();
