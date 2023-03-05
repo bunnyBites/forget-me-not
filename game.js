@@ -14,6 +14,17 @@ const playSoundForColor = (selectedColor) => {
   audioForChosenColor.play();
 }
 
+// function to animate for the selected color
+const animateForColor = (selectedColor) => {
+  $(`#${selectedColor}`)
+  .fadeIn(100)
+  .fadeOut(100)
+  .fadeIn(100)
+  .addClass("pressed");
+
+  setTimeout(() => { $(`#${selectedColor}`).removeClass("pressed") }, 100);
+}
+
 // get random number between 0 to 3
 const nextSequence = () => {
   const randomNumber = Math.floor(Math.random() * 3);
@@ -24,8 +35,8 @@ const nextSequence = () => {
   // store the random chosen color to game pattern
   gamePattern.push(randomChosenColor);
 
-  // use the random chosen color to select the element by id
-  $(`#${randomChosenColor}`).fadeIn(300).fadeOut(300).fadeIn(300);
+  // animate the selected random color
+  animateForColor(randomChosenColor)
 
   // play the sound for the chosen color
   playSoundForColor(randomChosenColor);
@@ -44,4 +55,7 @@ $(".btn").on("click", (event) => {
 
   // play sound for the selected color
   playSoundForColor(userChosenColour);
+
+    // animate the selected color by user
+    animateForColor(userChosenColour)
 })
